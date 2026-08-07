@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Todo lists no longer leak between concurrent sessions.** The extension
+  kept one `TodoStateManager` and one "current context" in its factory
+  closure. A host that loads an extension once and shares it across several
+  live sessions — pi's own `ResourceLoader` hands the same loaded extension to
+  every session it creates — therefore gave every agent the same list: one
+  session's `write` replaced another's, a `read` returned whatever was written
+  last, and the widget was pushed to whichever session most recently started a
+  turn, so one chat's todo list appeared above a different chat's editor.
+  State and widget updates are now keyed by session id. A
+  one-session-per-process host behaves exactly as before.
 - In-progress items no longer sit one column to the right of the others. The
   `in-progress` entry in `STATUS_ICONS` carried a trailing space while the
   other two didn't, and every call site adds its own separator — so the widget

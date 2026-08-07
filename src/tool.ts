@@ -82,7 +82,18 @@ IMPORTANT: Mark todos completed as soon as they are done. Do not batch completio
 
 // --- Tool Factory ---
 
-export function createManageTodoListTool(state: TodoStateManager, onUpdate: () => void) {
+/**
+ * @param stateFor  resolves the todo list belonging to the calling session.
+ *                  Takes the context rather than a fixed state object
+ *                  because one loaded extension can serve many concurrent
+ *                  sessions — see the note in index.ts.
+ * @param onUpdate  called after a successful write, with the same context,
+ *                  so the right session's widget is redrawn.
+ */
+export function createManageTodoListTool(
+  stateFor: (ctx: ExtensionContext) => TodoStateManager,
+  onUpdate: (ctx: ExtensionContext) => void,
+) {
   return {
     name: "manage_todo_list",
     label: "Todo List",
@@ -94,8 +105,10 @@ export function createManageTodoListTool(state: TodoStateManager, onUpdate: () =
       params: ManageTodoListInput,
       _signal: AbortSignal | undefined,
       _onStreamUpdate: AgentToolUpdateCallback<TodoDetails | undefined> | undefined,
-      _ctx: ExtensionContext
+      ctx: ExtensionContext
     ) {
+      const state = stateFor(ctx);
+
       if (params.operation === "read") {
         const todos = state.read();
         return {
@@ -136,7 +149,7 @@ export function createManageTodoListTool(state: TodoStateManager, onUpdate: () =
       }
 
       state.write(todoList);
-      onUpdate();
+      onUpdate(ctx);
 
       const stats = state.getStats();
       const todos = state.read();
