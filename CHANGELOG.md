@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- In-progress items no longer sit one column to the right of the others. The
+  `in-progress` entry in `STATUS_ICONS` carried a trailing space while the
+  other two didn't, and every call site adds its own separator — so the widget
+  above the editor and the expanded tool result both drew `◉  2.` against
+  `✓ 1.`.
+
 ## [0.2.0] - 2026-02-16
 
 ### Changed

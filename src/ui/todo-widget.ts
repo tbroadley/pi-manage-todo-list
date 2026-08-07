@@ -10,10 +10,13 @@ import type { TodoStateManager } from "../state-manager.js";
 
 const WIDGET_ID = "todo-list";
 
-/** Status icons for each todo state */
+/** Status icons for each todo state.
+ *
+ *  One glyph each, no padding: every call site writes `${icon} ` itself, so
+ *  a trailing space here indents that row one column past the others. */
 export const STATUS_ICONS: Record<string, string> = {
   "completed": "✓",
-  "in-progress": "◉ ",
+  "in-progress": "◉",
   "not-started": "○",
 };
 
